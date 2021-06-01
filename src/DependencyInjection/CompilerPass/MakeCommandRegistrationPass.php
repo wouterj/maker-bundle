@@ -38,11 +38,14 @@ class MakeCommandRegistrationPass implements CompilerPassInterface
                 throw new InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, MakerInterface::class));
             }
 
+            $makerTagAttributes = current($tags);
+            $commandName = $makerTagAttributes['command_name'] ?? $class::getCommandName();
+
             $commandDefinition = new ChildDefinition('maker.auto_command.abstract');
             $commandDefinition->setClass(MakerCommand::class);
             $commandDefinition->replaceArgument(0, new Reference($id));
 
-            $tagAttributes = ['command' => $class::getCommandName()];
+            $tagAttributes = ['command' => $commandName];
 
             if (!method_exists($class, 'getCommandDescription')) {
                 // no-op
@@ -63,7 +66,7 @@ class MakeCommandRegistrationPass implements CompilerPassInterface
                 }
             }
 
-            $container->setDefinition(sprintf('maker.auto_command.%s', Str::asTwigVariable($class::getCommandName())), $commandDefinition);
+            $container->setDefinition(sprintf('maker.auto_command.%s', Str::asTwigVariable($commandName)), $commandDefinition);
         }
     }
 }

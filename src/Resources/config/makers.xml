@@ -127,5 +127,13 @@
                 <argument>%kernel.project_dir%</argument>
                 <tag name="maker.command" />
             </service>
+
+            <service id="maker.maker.make_security" class="Symfony\Bundle\MakerBundle\Maker\ChainingMaker">
+                <tag name="maker.command" command-name="make:security" />
+
+                <argument type="collection">
+                    <argument type="service" id="maker.maker.make_user" />
+                </argument>
+            </service>
         </services>
 </container>
